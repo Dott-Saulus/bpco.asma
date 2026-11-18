@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BPCO e ASMA nel setting della medicina generale: dalla diagnosi alla prescrizione</title>
+<meta name="description" content="Strumento operativo per il medico di famiglia: terapia iniziale e riacutizzazioni di BPCO e asma.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Newsreader:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF3F7;--surface:#FFFFFF;--ink:#10222D;--muted:#4B5F6B;--line:#D0DBE3;
+  --accent:#0F6A8B;--accent-soft:#DAEBF3;--on-accent:#FFFFFF;
+  --danger:#B3261E;--danger-soft:#FBE5E2;--warn:#7A4F00;--warn-soft:#FBF0D6;--ok:#1D6A39;--ok-soft:#DFF1E5;
+  --hero-a:#0A2F45;--hero-b:#136A88;--hero-ink:#F2F8FB;--hero-muted:#C2DCE8;--bg-glow:#CFE4F0;
+  --shadow:0 1px 2px rgba(10,47,69,.06),0 12px 26px -16px rgba(10,47,69,.30);
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+body[data-d="asma"]{--bg:#F0F7F3;--accent:#277F58;--accent-soft:#E0F3E8;--hero-a:#8ECDAA;--hero-b:#C4E8D3;--hero-ink:#0F3A29;--hero-muted:#2C5E47;--bg-glow:#D3EEDD;--line:#D0E0D7}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0C1A23;--surface:#13262F;--ink:#E6EEF2;--muted:#9FB3BE;--line:#26414D;--accent:#6CBBD9;--accent-soft:#14384A;--on-accent:#07222E;
+    --danger:#FF9188;--danger-soft:#3B1D1B;--warn:#F2C46A;--warn-soft:#3A2F13;--ok:#84D6A0;--ok-soft:#173520;
+    --hero-a:#0A2535;--hero-b:#0F4962;--hero-ink:#EAF4F8;--hero-muted:#ADCADA;--bg-glow:#10364A;--shadow:0 1px 2px rgba(0,0,0,.45);color-scheme:dark}
+  body[data-d="asma"]{--bg:#0C1A15;--accent:#8EDDB2;--accent-soft:#163A2A;--on-accent:#06261A;--hero-a:#1F4A3A;--hero-b:#3A7C60;--hero-ink:#EEF8F2;--hero-muted:#BFE0CE;--bg-glow:#123525;--line:#264238}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);background-image:radial-gradient(900px 380px at 85% -80px,var(--bg-glow),transparent 70%);background-repeat:no-repeat;color:var(--ink);font-family:var(--font-text);font-size:16px;line-height:1.45;padding:22px max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+
+/* hero */
+header{position:relative;overflow:hidden;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:30px 34px;border-radius:18px;background:linear-gradient(120deg,var(--hero-a),var(--hero-b));color:var(--hero-ink);box-shadow:var(--shadow);transition:background .3s}
+header .head-text{position:relative;z-index:1;min-width:0}
+header .tree{position:absolute;right:-30px;bottom:-34px;width:520px;max-width:80%;height:auto;color:var(--hero-ink);opacity:.2;pointer-events:none}
+.logo-badge{position:relative;z-index:1;flex:none;width:108px;height:108px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -10px rgba(0,0,0,.45)}
+.logo-badge img{width:86px;height:auto;display:block}
+.bg-lungs{position:fixed;right:-70px;bottom:-50px;width:min(680px,90vw);height:auto;color:var(--accent);opacity:.06;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1}
+header h1{font-family:var(--font-display);font-size:clamp(1.65rem,4vw,2.4rem);line-height:1.1;margin:0 0 12px;font-weight:600;text-wrap:balance;max-width:30ch;letter-spacing:-.01em}
+header p{margin:0;color:var(--hero-muted);max-width:60ch}
+header .author{margin-top:16px;padding-top:13px;border-top:1px solid color-mix(in srgb,var(--hero-ink) 28%,transparent);font-size:.93rem}
+header .author strong{color:var(--hero-ink);font-weight:600}
+header .author a{color:var(--hero-ink);text-decoration-color:color-mix(in srgb,var(--hero-ink) 45%,transparent);text-underline-offset:3px}
+@media(max-width:640px){header{flex-direction:column-reverse;align-items:flex-start;gap:14px;padding:22px 20px}header .logo-badge{width:80px;height:80px}header .logo-badge img{width:64px}}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;display:flex;gap:10px;flex-wrap:wrap;padding:10px;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.nav .seg{flex:1 1 240px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--line);padding:4px;border-radius:10px}
+.seg button{font:inherit;font-weight:600;padding:11px 8px;border:0;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;min-height:46px;transition:background .12s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.nav .seg.main button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* layout */
+.tool{display:none}.tool.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.side{position:sticky;top:78px}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.side{position:static}.nav{position:static}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h2{display:flex;align-items:center;gap:10px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--font-num);font-size:.85rem;letter-spacing:0;flex:none}
+.hint{color:var(--muted);font-size:.88rem;margin:0}
+
+/* inputs */
+.rows{display:flex;flex-direction:column;gap:6px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;min-height:46px}
+.row:hover{border-color:var(--accent)}
+.row input{width:22px;height:22px;flex:none;accent-color:var(--accent)}
+.row .txt{flex:1;min-width:0}
+.row .txt small{display:block;color:var(--muted);font-size:.84rem}
+.row.on{background:var(--accent-soft);border-color:var(--accent)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-size:.85rem;color:var(--muted)}
+.field input,.field select{font:inherit;font-family:var(--font-num);font-size:.95rem;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-height:46px;width:100%}
+.field select{font-family:var(--font-text)}
+.lbl{margin-bottom:-6px}
+details summary{cursor:pointer;font-weight:600;min-height:32px}
+.q{display:grid;grid-template-columns:1fr 78px;gap:6px 12px;align-items:center;font-size:.9rem;margin-top:8px}
+.q select{font:inherit;font-family:var(--font-num);padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+
+/* questionari */
+.row .gr{flex:none;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--line);color:var(--muted);font-family:var(--font-num);font-weight:600}
+.row:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
+.row:has(input:checked) .gr{background:var(--accent);color:var(--on-accent)}
+.cat{display:flex;flex-direction:column;gap:7px;padding:12px 0;border-top:1px solid var(--line)}
+.cat:first-of-type{border-top:0;padding-top:4px}
+.cat .t{font-weight:600}
+.cat .t span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--line);color:var(--muted);font-family:var(--font-num);font-size:.78rem;margin-right:8px}
+.cat .ends{display:flex;justify-content:space-between;gap:14px;font-size:.82rem;color:var(--muted)}
+.cat .ends span:last-child{text-align:right}
+.chip{align-self:flex-start;padding:6px 12px;border-radius:999px;font-size:.88rem;font-weight:600;background:var(--line);color:var(--muted)}
+.chip.hi{background:var(--warn-soft);color:var(--warn)}.chip.lo{background:var(--ok-soft);color:var(--ok)}
+.prog{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.scalehint{font-size:.84rem;color:var(--muted);margin:0}
+[data-show]{display:none}[data-show].vis{display:block}
+
+/* results */
+.esito{position:relative;overflow:hidden;--tone:var(--accent);border-top:4px solid var(--tone);background:linear-gradient(160deg,var(--accent-soft),var(--surface) 58%)}
+.esito.g1{--tone:var(--ok);background:linear-gradient(160deg,var(--ok-soft),var(--surface) 58%)}
+.esito.g2{--tone:var(--warn);background:linear-gradient(160deg,var(--warn-soft),var(--surface) 58%)}
+.esito.g3{--tone:var(--danger);background:linear-gradient(160deg,var(--danger-soft),var(--surface) 58%)}
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ring{width:132px;height:132px;flex:none;filter:drop-shadow(0 6px 10px color-mix(in srgb,var(--tone) 22%,transparent))}
+.ring circle{stroke:var(--line);transition:stroke .25s}
+.ring circle.on{stroke:var(--tone)}
+.ring .disc{fill:var(--surface);stroke:none}
+.ring text{fill:var(--tone);font-family:var(--font-num);font-weight:600;text-anchor:middle;dominant-baseline:central}
+.score-lab{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 150px}
+.score-title{font-family:var(--font-display);font-size:1.55rem;line-height:1.12;font-weight:600;color:var(--tone);text-wrap:balance}
+.score-sub{color:var(--muted);font-size:.92rem}
+.pill{display:inline-block;padding:6px 12px;border-radius:999px;font-weight:600;font-size:.9rem;background:var(--accent-soft);color:var(--accent);align-self:flex-start}
+.pill.g1{background:var(--ok-soft);color:var(--ok)}.pill.g2{background:var(--warn-soft);color:var(--warn)}.pill.g3{background:var(--danger-soft);color:var(--danger)}
+.alert{padding:13px 16px;border-radius:10px;font-weight:500;font-size:.94rem}
+.alert.danger{background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger)}
+.alert.warn{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn)}
+.alert.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok)}
+.alert strong{font-weight:600}
+.dose-big{margin:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 16px;border-radius:12px;background:var(--accent-soft)}
+.dose-big .n{font-family:var(--font-display);font-size:1.55rem;font-weight:600;color:var(--accent);line-height:1.15}
+.kv{width:100%;border-collapse:collapse;font-size:.94rem}
+.kv td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top}
+.kv td:first-child{color:var(--muted);width:36%;padding-right:12px}
+.kv td:last-child{font-weight:500}
+ul.plain{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+.chk{list-style:none;padding-left:0}
+.chk li{position:relative;padding-left:26px}
+.chk li::before{content:"";position:absolute;left:0;top:.2em;width:16px;height:16px;border:2px solid var(--accent);border-radius:5px}
+.abe{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.abe div{--t:var(--ok);--ts:var(--ok-soft);border:1.5px solid var(--line);border-radius:12px;padding:10px 6px 9px;text-align:center;font-size:.78rem;color:var(--muted);opacity:.62;transition:all .2s}
+.abe div:nth-child(2){--t:var(--warn);--ts:var(--warn-soft)}.abe div:nth-child(3){--t:var(--danger);--ts:var(--danger-soft)}
+.abe b{display:block;font-family:var(--font-display);font-size:1.9rem;line-height:1.1;font-weight:600}
+.abe .on{opacity:1;border-color:var(--t);background:var(--ts);color:var(--t);transform:translateY(-3px);box-shadow:0 8px 16px -10px var(--t)}
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;align-items:end;height:92px;margin-top:4px}
+.ladder div{border-radius:9px 9px 4px 4px;background:var(--line);display:flex;align-items:flex-start;justify-content:center;padding-top:6px;font-family:var(--font-num);font-size:.85rem;color:var(--muted);transition:all .2s}
+.ladder div:nth-child(1){height:34%}.ladder div:nth-child(2){height:34%}.ladder div:nth-child(3){height:56%}.ladder div:nth-child(4){height:78%}.ladder div:nth-child(5){height:100%}
+.ladder .on{background:linear-gradient(180deg,var(--tone),color-mix(in srgb,var(--tone) 62%,var(--surface)));color:var(--on-accent);font-weight:600;box-shadow:0 8px 14px -8px var(--tone)}
+.ladder-cap{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-top:4px}
+.summary{width:100%;font-family:var(--font-num);font-size:.8rem;line-height:1.5;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical;min-height:190px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;padding:11px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);cursor:pointer;min-height:46px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tbl th{text-align:left;color:var(--muted);font-weight:600;padding:7px 8px 7px 0;border-bottom:1px solid var(--line)}
+.tbl td{padding:7px 8px 7px 0;border-top:1px solid var(--line)}
+.foot{color:var(--muted);font-size:.84rem;max-width:84ch}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:no-preference){.tool.on{animation:in .25s ease}@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}}
+@media print{.nav,.btns{display:none!important}.tool{display:block!important}}
+</style>
+</head>
+<body data-d="bpco">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="lungs" viewBox="0 0 400 300"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M200 6V108"/><path d="M191 24h18M191 40h18M191 56h18M191 72h18M191 88h18" stroke-width="1.6"/>
+<g id="lg"><path d="M200 108C196 122 178 132 158 150"/>
+<path d="M186 84C148 74 98 104 78 168C60 226 68 266 110 272C152 276 182 246 190 204C195 168 192 118 186 84Z"/>
+<path d="M158 150C140 158 122 172 112 196"/><path d="M158 150C146 168 146 190 150 222"/><path d="M158 150C140 140 118 140 100 152"/>
+<path d="M127 175C112 176 98 182 88 194"/><path d="M148 192C136 200 126 214 122 232"/><path d="M149 204C158 212 163 224 166 238"/><path d="M112 196C104 214 100 228 100 246"/>
+<g fill="currentColor" stroke="none"><circle cx="88" cy="194" r="4.5"/><circle cx="100" cy="246" r="4.5"/><circle cx="122" cy="232" r="4.5"/><circle cx="166" cy="238" r="4.5"/><circle cx="150" cy="222" r="4.5"/><circle cx="100" cy="152" r="4.5"/></g></g>
+<use href="#lg" transform="translate(400 0) scale(-1 1)"/>
+</g></symbol></defs></svg>
+<svg class="bg-lungs" viewBox="0 0 400 300" aria-hidden="true"><use href="#lungs"/></svg>
+<div class="wrap">
+
+<header>
+  <svg class="tree" viewBox="0 0 400 300" aria-hidden="true"><use href="#lungs"/></svg>
+  <div class="head-text">
+    <h1>BPCO e ASMA nel setting della medicina generale: dalla diagnosi alla prescrizione</h1>
+    <p>Terapia iniziale, ottimizzazione e riacutizzazioni. Inserisci i dati: terapia e testo per la cartella si aggiornano subito.</p>
+    <p class="author">Realizzato da:<br><strong><a href="https://www.linkedin.com/in/paolosimonato" target="_blank" rel="noopener">Dott. Paolo Simonato</a></strong> - Medico di Medicina Generale<br>Aggiornato al 18 novembre 2026 · versione 2.0</p>
+  </div>
+  <span class="logo-badge"><img alt="Società per l'Organizzazione e l'Efficientamento delle Cure Primarie" src="data:image/png;base64,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"></span>
+</header>
+
+<nav class="nav" aria-label="Strumenti">
+  <div class="seg main" id="navD"><button type="button" data-d="bpco" aria-pressed="true">BPCO</button><button type="button" data-d="asma" aria-pressed="false">ASMA</button></div>
+  <div class="seg" id="navM"><button type="button" data-m="terapia" aria-pressed="true">Terapia</button><button type="button" data-m="acuta" aria-pressed="false">Riacutizzazione</button></div>
+</nav>
+
+<main id="tools"></main>
+
+<p class="foot">Strumento di supporto decisionale a scopo formativo e organizzativo, basato su GOLD Pocket Guide 2026 e GINA 2026. Non sostituisce il giudizio clinico: dosi, indicazioni e rimborsabilità vanno verificate su scheda tecnica e note AIFA vigenti (per la BPCO: Nota 99). I dati restano nella pagina e non vengono salvati né inviati.</p>
+</div>
+
+<script>
+/* ============ stato ============ */
+const DEF={
+ b_spiro:'si',b_fev1:'',b_mmrc:'',b_caat:'',b_exac:'0',b_hosp:'0',b_eos:'',b_asm:'no',b_pneu:'no',b_br:'no',b_th:'none',
+ b_q1:'',b_q2:'',b_q3:'',b_q4:'',b_q5:'',b_q6:'',b_q7:'',b_q8:'',
+ x_dy:'lieve',x_sp:'no',x_fr:'',x_fc:'',x_o2:'',x_pcr:'',x_al:'no',x_ho:'buono',x_co:'no',
+ a_mode:'new',a_alt:'no',a_diag:'doc',a_track:'t1',a_freq:'2',a_step:'1',a_c1:'0',a_c2:'0',a_c3:'0',a_c4:'0',a_exa:'0',a_saba:'no',a_tech:'si',a_3m:'no',
+ r_talk:'fr',r_men:'ok',r_fr:'',r_fc:'',r_o2:'',r_pef:'',r_acc:'no',r_rf:'no',r_ics:'si'
+};
+let S=Object.assign({},DEF);
+const n=k=>{const v=parseFloat(S[k]);return isNaN(v)?NaN:v};
+const has=v=>!isNaN(v);
+const E=(s,r)=>(r||document).querySelector(s);
+
+/* ============ costruttori campi ============ */
+const seg=(k,opts)=>'<div class="seg" data-seg="'+k+'">'+opts.map(o=>'<button type="button" data-v="'+o[0]+'" aria-pressed="'+(String(S[k])===String(o[0]))+'">'+o[1]+'</button>').join('')+'</div>';
+const num=(k,l,ph,a)=>'<div class="field"><label for="f_'+k+'">'+l+'</label><input id="f_'+k+'" data-k="'+k+'" type="number" inputmode="decimal" placeholder="'+(ph||'')+'" '+(a||'')+' value="'+S[k]+'"></div>';
+const sel=(k,l,opts)=>'<div class="field"><label for="f_'+k+'">'+l+'</label><select id="f_'+k+'" data-k="'+k+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(String(S[k])===String(o[0])?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div>';
+const yn=(k,l)=>sel(k,l,[['0','No'],['1','Sì']]);
+const card=(i,t,body)=>'<section class="card"><h2><span class="step">'+i+'</span>'+t+'</h2>'+body+'</section>';
+const lbl=t=>'<div class="lbl">'+t+'</div>';
+const show=(cond,body)=>'<div data-show="'+cond+'">'+body+'</div>';
+
+const MM=[
+ ['0','Mi manca il fiato solo per sforzi intensi.'],
+ ['1','Mi manca il fiato se cammino veloce in piano o in leggera salita.'],
+ ['2','In piano cammino più piano dei coetanei, oppure devo fermarmi a riprendere fiato al mio passo.'],
+ ['3','Mi fermo a riprendere fiato dopo circa 100 metri o pochi minuti in piano.'],
+ ['4','Mi manca troppo il fiato per uscire di casa, o mi manca anche solo a vestirmi/svestirmi.']];
+const CAT=[
+ ['Tosse','Non tossisco mai','Tossisco sempre'],
+ ['Catarro','Nessun catarro','Petto pieno di catarro'],
+ ['Costrizione al petto','Nessuna sensazione','Costrizione molto forte'],
+ ['Fiato in salita o su una rampa di scale','Nessuna mancanza di fiato','Mi manca molto il fiato'],
+ ['Attività domestiche','Nessuna limitazione','Limitazioni gravi'],
+ ['Sicurezza nell\'uscire di casa','Mi sento sicuro','Non mi sento per niente sicuro'],
+ ['Sonno','Dormo profondamente','Non dormo bene a causa della malattia'],
+ ['Energia','Ho molta energia','Non ho nessuna energia']];
+const mmBlock=()=>'<div class="rows">'+MM.map(r=>'<label class="row"><input type="radio" name="mm" data-k="b_mmrc" value="'+r[0]+'"'+(String(S.b_mmrc)===r[0]?' checked':'')+'><span class="gr">'+r[0]+'</span><span class="txt">'+r[1]+'</span></label>').join('')+'</div><div class="chip" id="chip_mm">Non compilato</div>';
+const catBlock=()=>'<p class="scalehint">Per ogni voce scegli da 0 a 5: <b>0</b> = situazione migliore, <b>5</b> = peggiore.</p><div class="prog"><i id="prog_cat"></i></div>'+CAT.map((c,i)=>'<div class="cat"><div class="t"><span>'+(i+1)+'</span>'+c[0]+'</div>'+seg('b_q'+(i+1),[0,1,2,3,4,5].map(v=>[v,v]))+'<div class="ends"><span>0 · '+c[1]+'</span><span>5 · '+c[2]+'</span></div></div>').join('')+'<div class="chip" id="chip_cat">0 / 8 voci compilate</div>'+num('b_caat','Hai già il punteggio totale? Inseriscilo qui','0–40','min="0" max="40"');
+
+/* ============ definizione strumenti ============ */
+const TOOLS={
+ 'bpco-terapia':{left:()=>
+   card(1,'Diagnosi',sel('b_spiro','Spirometria con VEMS/CVF < 0,7 post-broncodilatatore',[['si','Sì, confermata'],['no','No / non eseguita']])+num('b_fev1','VEMS % predetto (post-BD)','es. 58','min="10" max="130"'))+
+   card(2,'Dispnea · mMRC',lbl('Scegli la frase che descrive meglio il paziente')+mmBlock()+'<p class="hint">Basta uno dei due questionari (mMRC o CAT). Se li compili entrambi, conta il risultato più alto.</p>')+
+   card(3,'Sintomi · CAT (COPD Assessment Test)',catBlock())+
+   card(4,'Rischio',  '<div class="fields">'+sel('b_exac','Riacutizzazioni moderate/gravi (ultimo anno)',[['0','0'],['1','1'],['2','≥ 2']])+sel('b_hosp','Ricoveri per riacutizzazione',[['0','0'],['1','≥ 1']])+'</div>')+
+   card(5,'Profilo per l\'ICS','<div class="fields">'+num('b_eos','Eosinofili (cell/µL)','es. 250','min="0" step="10"')+sel('b_asm','Storia di asma',[['no','No'],['si','Sì']])+sel('b_pneu','Polmoniti ricorrenti',[['no','No'],['si','Sì']])+sel('b_br','Bronchite cronica',[['no','No'],['si','Sì']])+'</div>')+
+   card(6,'Terapia attuale',sel('b_th','Mantenimento in corso',[['none','Nessuna / solo SABA'],['single','LABA o LAMA'],['dual','LABA + LAMA'],['laba_ics','LABA + ICS'],['triple','LABA + LAMA + ICS']])),
+  calc:cB, title:{reg:'Terapia proposta'}},
+
+ 'bpco-acuta':{left:()=>
+   card(1,'Parametri','<div class="fields">'+sel('x_dy','Dispnea',[['lieve','Lieve (VAS < 5)'],['marcata','Marcata (VAS ≥ 5)']])+sel('x_sp','Espettorato purulento',[['no','No'],['si','Sì']])+num('x_fr','FR (/min)','22')+num('x_fc','FC (bpm)','90')+num('x_o2','SpO₂ %','91')+num('x_pcr','PCR (mg/L)','opzionale')+'</div>')+
+   card(2,'Allarme e contesto','<div class="fields">'+sel('x_al','Confusione, sonnolenza, cianosi, muscoli accessori, instabilità',[['no','No'],['si','Sì']])+sel('x_ho','Supporto domiciliare',[['buono','Buono'],['scarso','Scarso']])+sel('x_co','Comorbidità gravi o instabili',[['no','No'],['si','Sì']])+'</div>'),
+  calc:cBx, title:{reg:'Gestione'}},
+
+ 'asma-terapia':{left:()=>
+   card(1,'Diagnosi',sel('a_diag','Variabilità del flusso documentata',[['doc','Sì: reversibilità ≥ 12% e ≥ 200 mL o PEF > 10%'],['ics','Già in ICS, non documentabile'],['no','Non ancora documentata']])+sel('a_alt','Segni di altra diagnosi (infezione cronica, causa cardiaca, esordio improvviso)',[['no','No'],['si','Sì']]))+
+   card(2,'Situazione',seg('a_mode',[['new','Nuovo paziente'],['rev','Già in terapia']])+
+     show('a_mode=new',lbl('Sintomi (adulto/adolescente)')+sel('a_freq','Quadro prevalente',[['1','Infrequenti (≤ 2 giorni/settimana)'],['2','< 3–5 giorni/settimana, funzione nella norma'],['3','Quasi tutti i giorni (≥ 4 gg/sett) o risveglio notturno ≥ 1/sett'],['4','Quotidiani o notturni con funzione bassa']]))+
+     show('a_mode=rev','<div class="fields">'+sel('a_step','Step attuale',[['0','Nessuna / solo SABA'],['1','Step 1–2'],['3','Step 3'],['4','Step 4'],['5','Step 5']])+'</div>'+
+       lbl('Ultime 4 settimane')+'<div class="fields">'+yn('a_c1','Sintomi diurni > 2 volte/sett')+yn('a_c2','Risvegli notturni')+yn('a_c3','Reliever > 2 volte/sett')+yn('a_c4','Limitazione attività')+'</div>'+
+       '<div class="fields">'+sel('a_exa','Riacutizzazioni con OCS/accesso urgente (12 mesi)',[['0','0'],['1','1'],['2','≥ 2']])+sel('a_saba','SABA ≥ 3 confezioni/anno',[['no','No'],['si','Sì']])+sel('a_tech','Tecnica e aderenza verificate',[['si','Sì, adeguate'],['no','No / non verificate']])+sel('a_3m','Controllo stabile da ≥ 3 mesi',[['no','No'],['si','Sì']])+'</div>'))+
+   card(3,'Schema di trattamento',seg('a_track',[['t1','Track 1 · ICS-formoterolo (preferito)'],['t2','Track 2 · reliever SABA']])),
+  calc:cA, title:{reg:'Terapia proposta'}},
+
+ 'asma-acuta':{left:()=>
+   card(1,'Valutazione','<div class="fields">'+sel('r_talk','Eloquio',[['fr','Frasi complete'],['par','Parole singole'],['no','Non riesce a parlare']])+sel('r_men','Stato mentale',[['ok','Vigile'],['ag','Agitato'],['son','Sonnolento / confuso']])+sel('r_acc','Muscoli accessori / torace silente',[['no','Assenti'],['acc','Muscoli accessori'],['sil','Torace silente']])+'</div>')+
+   card(2,'Misure','<div class="fields">'+num('r_fr','FR (/min)','22')+num('r_fc','FC (bpm)','100')+num('r_o2','SpO₂ %','94')+num('r_pef','PEF % (predetto/migliore)','opzionale')+'</div>')+
+   card(3,'Contesto','<div class="fields">'+sel('r_rf','Fattori di rischio di asma fatale',[['no','No'],['si','Sì']])+sel('r_ics','ICS regolare in corso',[['si','Sì'],['no','No']])+'</div>'),
+  calc:cAx, title:{reg:'Trattamento'}}
+};
+
+/* ============ calcoli ============ */
+const f=(a,b)=>a;
+function cB(){
+  const m=n('b_mmrc'),c=n('b_caat'),ex=+S.b_exac,ho=+S.b_hosp,eos=n('b_eos'),fev=n('b_fev1');
+  const o={alerts:[],rx:[],todo:[]};
+  if(S.b_spiro==='no'){
+    o.alerts.push(['danger','<strong>Diagnosi non confermata.</strong> Senza spirometria non si avvia la terapia di mantenimento.']);
+    o.head={pill:'Da confermare',cls:'g2',big:'?',sub:'Spirometria mancante',ring:[3,0]};
+    o.reg={big:'Esegui la spirometria',rows:[['Pre-BD VEMS/CVF ≥ 0,7','BPCO esclusa: cercare altre cause'],['Pre-BD VEMS/CVF < 0,7','Ripetere dopo broncodilatatore: conferma se < 0,7']]};
+    o.text='BPCO: diagnosi non confermata. Spirometria da eseguire prima della terapia di mantenimento.';return o;
+  }
+  if(!has(m)&&!has(c)){o.empty='Compila il mMRC oppure il CAT (tutte le 8 voci) per classificare il paziente.';return o;}
+  const hS=(has(m)&&m>=2)||(has(c)&&c>=10),hR=ex>=1||ho>=1;
+  const g=hR?'E':(hS?'B':'A'),cls={A:'g1',B:'g2',E:'g3'}[g];
+  const grade=has(fev)?(fev>=80?'GOLD 1':fev>=50?'GOLD 2':fev>=30?'GOLD 3':'GOLD 4'):'';
+  o.head={pill:'Gruppo '+g,cls,big:g,sub:(hS?'Molti sintomi':'Pochi sintomi')+' · '+(hR?'alto rischio':'basso rischio')+(grade?' · '+grade:''),ring:[3,{A:1,B:2,E:3}[g]]};
+  o.extra='<div class="abe">'+['A','B','E'].map(x=>'<div class="'+(x===g?'on':'')+'"><b>'+x+'</b>'+({A:'pochi sintomi',B:'molti sintomi',E:'riacutizzazioni'}[x])+'</div>').join('')+'</div>';
+  const th=S.b_th,asm=S.b_asm==='si',pn=S.b_pneu==='si',br=S.b_br==='si';
+  const eosKnown=has(eos),e300=eosKnown&&eos>=300,e100=eosKnown&&eos>=100;
+  const bigReg=(b,rows)=>{o.reg={big:b,rows:rows};};
+  const icsNo=pn?'Polmoniti ricorrenti: ICS sconsigliato, valutare con lo specialista.':null;
+  const issue=hR&&hS?'both':hR?'exac':hS?'dys':'ok';
+  const optDys=[['Prima di escalare','Verifica tecnica inalatoria e aderenza; valuta cambio device o molecole'],['Aggiunte','Riabilitazione e attività fisica; considera ensifentrina; cerca altre cause di dispnea']];
+  if(th==='none'){
+    if(g==='A')bigReg('1 broncodilatatore a lunga durata (LABA o LAMA)',[['Al bisogno','SABA'],['Poi','Rivaluta a 12–16 settimane con spirometria e sintomi']]);
+    else if(g==='B')bigReg('LABA + LAMA in singolo inalatore',[['Al bisogno','SABA'],['Poi','Rivaluta a 12–16 settimane']]);
+    else{
+      const trip=(e300&&!pn)||asm;
+      bigReg(trip?'LABA + LAMA + ICS in singolo inalatore':'LABA + LAMA in singolo inalatore',[
+        ['Perché',trip?(asm?'Storia di asma: ICS fortemente a favore':'Eosinofili ≥ 300/µL con riacutizzazioni'):'Gruppo E: base LABA + LAMA'],
+        ['Se riacutizza ancora',eosKnown?(pn?'Polmoniti ricorrenti: ICS sconsigliato':(e100?'Aggiungi ICS (triplice)':'Eosinofili < 100: ICS poco utile; roflumilast o azitromicina')):'Dosa gli eosinofili'],
+        ['Al bisogno','SABA']]);
+      if(!eosKnown)o.alerts.push(['warn','Dosa gli <strong>eosinofili</strong>: guidano l\'aggiunta dell\'ICS.']);
+    }
+  }else if(th==='single'){
+    if(issue==='ok')bigReg('Continua la terapia attuale',[['Nota','Controllo a 12–16 settimane']]);
+    else if(issue==='dys')bigReg('Passa a LABA + LAMA',[['Come','Singolo inalatore']]);
+    else{
+      bigReg(e300?'Passa a LABA + LAMA + ICS':'Passa a LABA + LAMA',[['Perché',e300?'Riacutizzazioni con eosinofili ≥ 300/µL':'Riacutizzazioni con eosinofili < 300/µL'+(eosKnown?'':' (da dosare)')],['Come','Singolo inalatore']]);
+      if(!eosKnown)o.alerts.push(['warn','Dosa gli <strong>eosinofili</strong> per scegliere tra doppia e triplice.']);
+      if(issue==='both')o.rx.push('Dispnea persistente: stesso passaggio copre anche la dispnea.');
+    }
+  }else if(th==='dual'){
+    if(issue==='ok')bigReg('Continua LABA + LAMA',[['Nota','Controllo a 12–16 settimane']]);
+    else if(issue==='dys')bigReg('Ottimizza, non escalare con ICS',optDys);
+    else{
+      if(!eosKnown){bigReg('Dosa gli eosinofili',[['Se ≥ 100','Aggiungi ICS (triplice)'],['Se < 100','Roflumilast (VEMS < 50% + bronchite cronica) o azitromicina']]);o.alerts.push(['warn','Servono gli <strong>eosinofili</strong> per decidere.']);}
+      else if(e100&&!pn)bigReg('Aggiungi ICS: LABA + LAMA + ICS',[['Perché','Riacutizzazioni con eosinofili ≥ 100/µL'],['Come','Singolo inalatore']]);
+      else if(e100&&pn)bigReg('ICS sconsigliato: valuta con lo specialista',[['Perché','Polmoniti ricorrenti nonostante eosinofili ≥ 100/µL']]);
+      else bigReg(fev<50&&br?'Roflumilast':'Azitromicina (preferibilmente ex fumatori)',[['Perché','Eosinofili < 100/µL: ICS poco utile'],['Roflumilast','Se VEMS < 50% e bronchite cronica'],['Azitromicina','Preferibilmente ex fumatori']]);
+      if(issue==='both')o.reg.rows=o.reg.rows.concat(optDys);
+    }
+  }else if(th==='laba_ics'){
+    if(issue==='exac'||issue==='both'){
+      if(!eosKnown){bigReg('Dosa gli eosinofili',[['Se ≥ 100','Passa a LABA + LAMA + ICS'],['Se < 100','Discuti con lo specialista']]);o.alerts.push(['warn','Servono gli <strong>eosinofili</strong> per decidere.']);}
+      else if(e100)bigReg('Aggiungi LAMA: LABA + LAMA + ICS',[['Perché','Riacutizzazioni recenti con eosinofili ≥ 100/µL']]);
+      else bigReg('Discuti con lo specialista',[['Perché','Riacutizzazioni con eosinofili < 100/µL: beneficio ICS improbabile']]);
+    }else if(issue==='dys')bigReg('Passa a LABA + LAMA',[['Alternativa','LABA + LAMA + ICS se storia di riacutizzazioni con buona risposta all\'ICS']]);
+    else bigReg('Continua o passa a LABA + LAMA',[['Continua','Se in passato riacutizzava e rispondeva all\'ICS'],['Passa a LABA + LAMA','Se nessuna riacutizzazione rilevante']]);
+  }else{
+    if(issue==='ok')bigReg('Continua la triplice',[['Nota','Controllo a 12–16 settimane']]);
+    else if(issue==='dys')bigReg('Ottimizza la terapia in corso',optDys);
+    else{
+      const rows=[['Opzioni',(fev<50&&br?'Roflumilast (VEMS < 50% + bronchite cronica); ':'')+'azitromicina (preferibilmente ex fumatori)']];
+      if(e300&&(ex>=2||ho>=1))rows.push(['Specialista','Valuta terapia biologica (dupilumab con bronchite cronica, mepolizumab)']);
+      if(pn)rows.push(['ICS','Polmoniti ricorrenti: valuta de-escalation']);
+      bigReg('Aggiungi terapia anti-riacutizzazioni',rows);
+      if(issue==='both')o.reg.rows=o.reg.rows.concat(optDys);
+    }
+  }
+  o.rx=['Verifica la <strong>Nota AIFA 99</strong> vigente (diagnosi spirometrica, piano terapeutico, ruolo del MMG)','Preferisci il <strong>singolo inalatore</strong>; il device va scelto sulle capacità del paziente (DPI se inspira forte e profondo, MDI con distanziatore se serve coordinazione)','<strong>Fai dimostrare la tecnica</strong> e rivalutala a ogni visita','SABA al bisogno']
+    .concat(o.rx);
+  o.todo=['Fumo: counselling ed eventuale terapia','Vaccini: influenza, COVID-19, pneumococco, RSV (> 50 anni o malattia cronica), zoster, Tdap','Riabilitazione e attività fisica; piano d\'azione scritto','Comorbidità: cardiovascolari, osteoporosi, ansia/depressione','Controllo a 12–16 settimane: spirometria, mMRC/CAT, riacutizzazioni'];
+  const tM={none:'nessuna/SABA',single:'LABA o LAMA',dual:'LABA+LAMA',laba_ics:'LABA+ICS',triple:'LABA+LAMA+ICS'};
+  o.text='BPCO stabile – GOLD 2026\nGruppo '+g+' ('+o.head.sub+')\nmMRC: '+(has(m)?m:'n.d.')+'  CAT: '+(has(c)?c:'n.d.')+'  VEMS%: '+(has(fev)?fev:'n.d.')+'\nRiacutizzazioni mod/gravi: '+ex+'  Ricoveri: '+ho+'  Eosinofili: '+(eosKnown?eos:'n.d.')+'\nTerapia attuale: '+tM[th]+'\n\nProposta: '+o.reg.big+'\n'+o.reg.rows.map(r=>r.join(': ')).join('\n')+'\n\nPrescrizione: Nota AIFA 99; singolo inalatore; tecnica verificata; SABA al bisogno.\nControllo a 12–16 settimane con spirometria.';
+  return o;
+}
+
+function cBx(){
+  const fr=n('x_fr'),fc=n('x_fc'),o2=n('x_o2'),pcr=n('x_pcr');const o={alerts:[],rx:[],todo:[]};
+  let k=0;if(S.x_dy==='marcata')k++;if(has(fr)&&fr>=24)k++;if(has(fc)&&fc>=95)k++;if(has(o2)&&o2<92)k++;if(has(pcr)&&pcr>=10)k++;
+  const al=S.x_al==='si',weak=S.x_ho==='scarso'||S.x_co==='si';
+  const sev=al?'grave':(k>=3?'moderata':'lieve'),cls={lieve:'g1',moderata:'g2',grave:'g3'}[sev];
+  o.head={pill:'Riacutizzazione '+sev,cls,big:k+'/5',sub:'criteri di moderata'+(al?' · segni di allarme':''),ring:[5,k]};
+  let place,why;
+  if(al){place='118 · ricovero';o.alerts.push(['danger','<strong>Segni di allarme: chiama il 118.</strong> HFNT o NIV in ospedale.']);why='Insufficienza respiratoria o instabilità'}
+  else if(sev==='moderata'&&has(o2)&&o2<92){place='Valuta PS / ricovero';why='SpO₂ < 92%'}
+  else if(sev==='moderata'&&weak){place='Valuta PS / ricovero';why='Supporto scarso o comorbidità instabili'}
+  else if(sev==='moderata'){place='Domicilio con controllo 48–72 h';why='Buon supporto, nessuna comorbidità instabile'}
+  else if(weak){place='Domicilio, bassa soglia per il PS';why='Lieve ma supporto scarso o comorbidità'}
+  else {place='Domicilio';why='Lieve con buon supporto'}
+  o.reg={big:place,rows:[['Perché',why],['Escludi','Polmonite, scompenso, embolia polmonare, aritmie, pneumotorace']]};
+  o.rx=['<strong>SABA</strong> ± anticolinergico a breve durata: aumenta dose e frequenza (con distanziatore)'];
+  o.rx.push(sev==='lieve'?'Corticosteroide sistemico solo se risposta inadeguata':'<strong>Corticosteroide sistemico per 5 giorni</strong> (riferimento: prednisone 40 mg/die)');
+  o.rx.push((S.x_sp==='si'||al)?'<strong>Antibiotico per 5 giorni</strong> (espettorato purulento): scelta secondo linee guida locali':'Antibiotico non di routine (senza espettorato purulento)');
+  if(has(o2)&&o2<92)o.rx.push('<strong>Ossigeno</strong> titrato sulla saturazione, attenzione all\'ipercapnia');
+  o.rx.push('Niente metilxantine');
+  o.todo=['Riavvia o ottimizza subito il broncodilatatore a lunga durata','Rivedi tecnica inalatoria','Se eosinofili elevati e ≥ 1 riacutizzazione moderata/grave: valuta ICS nella dimissione','Controllo a 1–4 settimane: sintomi, tecnica, riabilitazione','Controllo a 12–16 settimane: spirometria, mMRC/CAT'];
+  o.text='Riacutizzazione BPCO – '+sev+' ('+k+'/5 criteri)\nFR '+(has(fr)?fr:'n.d.')+'  FC '+(has(fc)?fc:'n.d.')+'  SpO2 '+(has(o2)?o2:'n.d.')+'%  PCR '+(has(pcr)?pcr:'n.d.')+'\nLuogo di cura: '+place+' ('+why+')\n\nTerapia: SABA±SAMA aumentati; steroide sistemico 5 gg'+((S.x_sp==='si')?'; antibiotico 5 gg':'')+'.\nControllo 1–4 settimane e 12–16 settimane (spirometria).';
+  return o;
+}
+
+const DOSE={1:'1 inalazione al bisogno',3:'1 inalazione 2 volte/die (o 1 volta) + 1 al bisogno',4:'2 inalazioni 2 volte/die + 1 al bisogno'};
+function doseRows(st){const d=DOSE[st==='1–2'?1:(st===5?4:st)];return [['Budesonide-formoterolo 160/4,5 mcg (200/6)',d],['Beclometasone-formoterolo 100/6 mcg (pMDI + distanziatore)',d]];}
+function cA(){
+  const o={alerts:[],rx:[],todo:[]};const t1=S.a_track==='t1',rev=S.a_mode==='rev';
+  if(S.a_alt==='si')o.alerts.push(['warn','<strong>Escludi altre diagnosi</strong> (infezione cronica, causa cardiaca, corpo estraneo, BPCO) e valuta l\'invio specialistico prima di trattare.']);
+  if(S.a_diag==='no')o.alerts.push(['warn','<strong>Documenta la variabilità prima dell\'ICS</strong>: spirometria con broncodilatatore (≥ 12% e ≥ 200 mL) o PEF seriato per 2 settimane (> 10%). Se serve trattare subito, parti e conferma entro poche settimane.']);
+  if(S.a_diag==='ics')o.alerts.push(['warn','<strong>Già in ICS:</strong> per confermare riduci l\'ICS del 25–50% con piano di rientro e rivaluta variabilità dopo 2–4 settimane.']);
+  let st,pill,cls='',label,why=[],lvl=null;
+  if(!rev){
+    st={1:'1–2',2:'1–2',3:'3',4:'4'}[S.a_freq];
+    why.push(['Quadro',{1:'Sintomi infrequenti',2:'Sintomi < 3–5 giorni/settimana',3:'Sintomi quasi quotidiani o notturni',4:'Sintomi quotidiani con funzione bassa'}[S.a_freq]]);
+  }else{
+    const k=['a_c1','a_c2','a_c3','a_c4'].reduce((a,x)=>a+(+S[x]),0),exa=+S.a_exa,saba=S.a_saba==='si',tech=S.a_tech==='si',cur=+S.a_step;
+    lvl=k===0?'Ben controllato':(k<=2?'Parzialmente controllato':'Non controllato');cls=k===0?'g1':(k<=2?'g2':'g3');
+    why.push(['Controllo',lvl+' ('+k+'/4)']);
+    if(saba)o.alerts.push(['danger','<strong>SABA in eccesso</strong> (≥ 3 confezioni/anno): alto rischio di riacutizzazioni, rivedi la terapia.']);
+    if(cur===0){st=k<=2?'1–2':(k===3?'3':'4');why.push(['Nota','Nessun ICS: il SABA da solo non è più raccomandato']);}
+    else if(k>0||exa>=1){
+      st=cur===1?'3':(cur===3?'4':5);
+      if(!tech)o.alerts.push(['warn','<strong>Prima dello step-up</strong> verifica tecnica inalatoria e aderenza, poi comorbidità e fattori modificabili.']);
+      why.push(['Azione',cur>=4?'Step 5: invio specialistico (tecnica e aderenza corrette)':'Step-up']);
+      if(!t1&&cur<=3)why.push(['Alternativa','Passa al Track 1 con ICS-formoterolo come reliever']);
+    }else{
+      st=cur===1?'1–2':cur;
+      if(S.a_3m==='si'){why.push(['Step-down','Controllo stabile da ≥ 3 mesi: riduci ICS 25–50% ogni 3 mesi (step 4 → 3 → 1–2), con piano scritto e scorta per tornare indietro']);}
+      else why.push(['Azione','Continua; rivaluta a 3 mesi per lo step-down']);
+    }
+  }
+  const stLab=st===5?'Step 5':'Step '+st;
+  o.head={pill:rev?lvl:'Nuova prescrizione',cls:cls,big:String(st),sub:'Step GINA · '+(t1?'Track 1':'Track 2'),ring:[5,st==='1–2'?2:+st]};
+  o.extra='<div class="ladder">'+['1–2','2','3','4','5'].slice(0,0).join('')+[['1','1–2'],['2','2'],['3','3'],['4','4'],['5','5']].map((x,i)=>'<div class="'+((String(st)==='1–2'&&i<2)||String(st)===x[0]?'on':'')+'">'+(i===0?'1':x[1])+'</div>').join('')+'</div><div class="ladder-cap"><span>meno intensivo</span><span>più intensivo</span></div>';
+  if(t1){
+    const big={'1–2':'ICS-formoterolo a basso dosaggio al bisogno',3:'MART a basso dosaggio',4:'MART a dose media',5:'Invio specialistico (nell\'attesa: MART a dose media)'}[st];
+    o.reg={big,rows:doseRows(st).concat(why)};
+  }else{
+    const big={'1–2':'ICS + SABA al bisogno, oppure ICS basso quotidiano + ICS-SABA/SABA',3:'ICS-LABA basso dosaggio + ICS-SABA/SABA al bisogno',4:'ICS-LABA a dose media + ICS-SABA/SABA al bisogno',5:'Invio specialistico (nell\'attesa: ICS-LABA dose media/alta)'}[st];
+    o.reg={big,rows:[['Nota','Con SABA da solo come reliever il rischio di riacutizzazioni è maggiore: valuta il Track 1']].concat(why)};
+  }
+  o.rx=['<strong>Mai SABA da solo</strong> e mai LABA senza ICS','Verifica indicazioni e rimborsabilità sulla <strong>scheda tecnica AIFA</strong> (uso al bisogno/MART di specifici prodotti)','Fai dimostrare la tecnica; con pMDI usa il distanziatore'];
+  if(t1)o.rx.unshift('Reliever = lo stesso ICS-formoterolo: <strong>1 inalazione al bisogno</strong>, anche prima di sforzo o allergeni; <strong>massimo 12 inalazioni/24 h</strong> (reliever + mantenimento), oltre: visita');
+  o.todo=['Piano d\'azione scritto','Fumo, allergeni e irritanti, FANS e beta-bloccanti','Comorbidità: rinite/rinosinusite, reflusso, obesità, ansia/depressione','Vaccini','Controllo a 2–3 mesi (prima se urgente); VEMS a 3–6 mesi per fissare il miglior valore'];
+  o.text='Asma – GINA 2026 ('+(rev?'revisione':'nuova prescrizione')+')\nDiagnosi: '+({doc:'variabilità documentata',ics:'già in ICS, non documentabile',no:'non ancora documentata'}[S.a_diag])+'\n'+(rev?lvl+'\n':'')+'Proposta: '+stLab+' · '+(t1?'Track 1':'Track 2')+' · '+o.reg.big+'\n'+(t1?doseRows(st).map(r=>r.join(': ')).join('\n')+'\n':'')+'\nIstruzioni: tecnica verificata; piano d\'azione scritto; controllo a 2–3 mesi.';
+  return o;
+}
+
+function cAx(){
+  const fr=n('r_fr'),fc=n('r_fc'),o2=n('r_o2'),pef=n('r_pef');const o={alerts:[],rx:[],todo:[]};
+  const life=S.r_men==='son'||S.r_acc==='sil'||S.r_talk==='no';
+  const sev=life||S.r_talk==='par'||S.r_men==='ag'||S.r_acc==='acc'||(has(fr)&&fr>30)||(has(fc)&&fc>120)||(has(o2)&&o2<90)||(has(pef)&&pef<=50);
+  const lab=life?'pericolo di vita':(sev?'grave':'lieve–moderata'),cls=life||sev?'g3':'g2';
+  let place;
+  if(life){place='118 · terapia intensiva';o.alerts.push(['danger','<strong>Chiama il 118.</strong> Nell\'attesa: SABA e ipratropio, ossigeno controllato, corticosteroide sistemico. Non lasciare solo il paziente.']);}
+  else if(sev){place='118 · pronto soccorso';o.alerts.push(['danger','<strong>Riacutizzazione grave: trasferimento immediato.</strong> Inizia SABA, ossigeno se SpO₂ < 92% e corticosteroide durante l\'attesa.']);}
+  else if(S.r_rf==='si'){place='Ambulatorio, bassa soglia per l\'invio';o.alerts.push(['warn','<strong>Fattori di rischio di asma fatale:</strong> monitoraggio stretto, invia se la risposta non è rapida.']);}
+  else place='Ambulatorio con rivalutazione';
+  o.head={pill:'Riacutizzazione '+lab,cls,big:life?'!!':(sev?'!':'OK'),sub:'Eloquio, stato mentale, FR/FC, SpO₂, PEF',ring:[3,life?3:(sev?2:1)]};
+  o.reg={big:place,rows:[['Rivaluta','Dopo la prima dose e dopo la prima ora: PEF o spirometria'],['Peggiora o non migliora','Trasferimento immediato']]};
+  o.rx=['<strong>Salbutamolo pMDI + distanziatore</strong>: 4 puff, uno alla volta (agita il flacone), ripetibili nella prima ora secondo risposta. Dosi prudenti: rischio di tossicità da SABA','Nelle forme lievi: <strong>ICS-formoterolo</strong> in alternativa al SABA'];
+  o.rx.push((life||sev)?'<strong>Prednisone/prednisolone 40–50 mg/die per 5–7 giorni</strong>, subito':'<strong>Prednisone/prednisolone 40–50 mg/die per 5–7 giorni</strong> se moderata o risposta insufficiente al reliever');
+  o.rx.push(has(o2)?(o2<92?'<strong>Ossigeno</strong> titrato a SpO₂ 92–95%':'SpO₂ ≥ 92%: ossigeno non necessario'):'Ossigeno solo se SpO₂ < 92% (target 92–95%)');
+  o.rx.push('<strong>Antibiotici non di routine</strong> (solo con chiari segni di infezione). Se anafilassi: prima adrenalina');
+  o.todo=['Alla dimissione: <strong>inizia o rivedi l\'ICS</strong>, preferito MART con ICS-formoterolo da step 4; con reliever SABA aumenta l\'ICS per 2–4 settimane','Reliever solo al bisogno, mai SABA da solo','Tecnica inalatoria e aderenza; cause (virus, allergeni, ICS non assunto)','Piano d\'azione scritto','Controllo a 2–7 giorni; poi entro 2–3 mesi'];
+  o.text='Riacutizzazione asma – '+lab+'\nFR '+(has(fr)?fr:'n.d.')+'  FC '+(has(fc)?fc:'n.d.')+'  SpO2 '+(has(o2)?o2:'n.d.')+'%  PEF% '+(has(pef)?pef:'n.d.')+'\nLuogo di cura: '+place+'\n\nTerapia: salbutamolo 4 puff con spacer, rivalutazione; prednisone 40–50 mg/die 5–7 gg; ossigeno se SpO2 < 92%; no antibiotici di routine.\nDimissione: ICS/MART step 4, piano d\'azione, controllo a 2–7 giorni.';
+  return o;
+}
+
+/* ============ rendering ============ */
+const SIDE=`<div class="col side"><div class="col alerts" style="gap:10px" aria-live="polite"></div>
+ <section class="card esito" aria-live="polite"><h2>Esito</h2><div class="head"></div><div class="extra"></div></section>
+ <section class="card regc" aria-live="polite"><h2 class="regt"></h2><p class="dose-big"><span class="n"></span></p><table class="kv"></table></section>
+ <section class="card rxc"><h2>Come prescriverla</h2><ul class="plain rx"></ul></section>
+ <section class="card todoc"><h2>Da fare e controlli</h2><ul class="plain chk todo"></ul></section>
+ <section class="card"><h2>Testo per la cartella</h2><textarea class="summary" readonly aria-label="Testo da copiare"></textarea>
+  <div class="btns"><button type="button" class="btn copy">Copia testo</button><button type="button" class="btn ghost reset">Azzera</button></div><p class="hint cm" role="status"></p></section></div>`;
+const EXTRA_ASMA=`<details class="card dosi"><summary>Dosi giornaliere di ICS, adulti (mcg)</summary><div style="overflow-x:auto;margin-top:8px"><table class="tbl"><tr><th>ICS</th><th>Basso</th><th>Medio</th><th>Alto</th></tr>
+<tr><td>Beclometasone pMDI standard</td><td>200–500</td><td>&gt;500–1000</td><td>&gt;1000</td></tr><tr><td>Beclometasone extrafine</td><td>100–200</td><td>&gt;200–400</td><td>&gt;400</td></tr>
+<tr><td>Budesonide</td><td>200–400</td><td>&gt;400–800</td><td>&gt;800</td></tr><tr><td>Ciclesonide extrafine</td><td>80–160</td><td>&gt;160–320</td><td>&gt;320</td></tr>
+<tr><td>Fluticasone propionato</td><td>100–250</td><td>&gt;250–500</td><td>&gt;500</td></tr></table></div><p class="hint">Dosi misurate; non sono equivalenze di potenza.</p></details>`;
+
+function build(){
+  const host=E('#tools');host.innerHTML='';
+  Object.keys(TOOLS).forEach(id=>{
+    const t=TOOLS[id],d=document.createElement('div');d.className='tool';d.id='t-'+id;
+    d.innerHTML='<div class="grid"><div class="col left">'+t.left()+(id==='asma-terapia'?EXTRA_ASMA:'')+'</div>'+SIDE+'</div>';
+    host.appendChild(d);
+  });
+  applyVis();showCurrent();renderAll();
+}
+function applyVis(){
+  document.querySelectorAll('[data-show]').forEach(e=>{const[k,v]=e.dataset.show.split('=');e.classList.toggle('vis',String(S[k])===v);});
+}
+function ring(big,seg){
+  const N=seg?seg[0]:0,on=seg?seg[1]:0,R=50,C=2*Math.PI*R,gap=N>1?17:0;
+  let a='';for(let i=0;i<N;i++){const L=C/N-gap;a+='<circle class="'+(i<on?'on':'')+'" cx="60" cy="60" r="'+R+'" stroke-dasharray="'+L.toFixed(2)+' '+(C-L).toFixed(2)+'" stroke-dashoffset="'+(-(i*C/N)-gap/2).toFixed(2)+'"/>';}
+  const fs=big.length<=1?46:big.length<=3?34:26;
+  return '<svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="disc" cx="60" cy="60" r="40"/><g transform="rotate(-90 60 60)" fill="none" stroke-width="11" stroke-linecap="round">'+a+'</g><text x="60" y="61" font-size="'+fs+'">'+big+'</text></svg>';
+}
+function paint(id){
+  const t=TOOLS[id],r=t.calc(),root=E('#t-'+id);
+  const g=s=>E(s,root);
+  g('.alerts').innerHTML=(r.alerts||[]).map(a=>'<div class="alert '+a[0]+'">'+a[1]+'</div>').join('');
+  const hasR=!r.empty;
+  ['.regc','.rxc','.todoc'].forEach(s=>g(s).hidden=!(hasR&&r.reg));
+  if(r.empty){g('.esito').className='card esito';g('.head').innerHTML='<p class="hint">'+r.empty+'</p>';g('.extra').innerHTML='';g('textarea').value='';return;}
+  g('.esito').className='card esito '+(r.head.cls||'');
+  g('.head').innerHTML='<div class="score">'+ring(String(r.head.big),r.head.ring)+'<div class="score-lab"><span class="score-title">'+r.head.pill+'</span><span class="score-sub">'+r.head.sub+'</span></div></div>';
+  g('.extra').innerHTML=r.extra||'';
+  g('.regt').textContent=t.title.reg;
+  g('.dose-big .n').textContent=r.reg.big;
+  g('.kv').innerHTML=r.reg.rows.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>').join('');
+  g('.rx').innerHTML=(r.rx||[]).map(x=>'<li>'+x+'</li>').join('');
+  g('.todo').innerHTML=(r.todo||[]).map(x=>'<li>'+x+'</li>').join('');
+  g('textarea').value=r.text||'';
+}
+function syncCat(){
+  let t=0,k=0;for(let i=1;i<=8;i++){const v=parseInt(S['b_q'+i]);if(!isNaN(v)){t+=v;k++;}}
+  if(k===8){S.b_caat=String(t);const f=E('#f_b_caat');if(f)f.value=t;}
+}
+function chips(){
+  const m=n('b_mmrc'),c=n('b_caat');let k=0,t=0;
+  for(let i=1;i<=8;i++){const v=parseInt(S['b_q'+i]);if(!isNaN(v)){k++;t+=v;}}
+  const cm=E('#chip_mm');
+  if(cm){cm.className='chip'+(has(m)?(m>=2?' hi':' lo'):'');cm.textContent=has(m)?'mMRC '+m+' · '+(m>=2?'molti sintomi (≥ 2)':'pochi sintomi (< 2)'):'Non compilato';}
+  const cc=E('#chip_cat');
+  if(cc){
+    if(k===8){cc.className='chip'+(t>=10?' hi':' lo');cc.textContent='CAT '+t+' / 40 · '+(t>=10?'molti sintomi (≥ 10)':'pochi sintomi (< 10)');}
+    else if(k>0){cc.className='chip';cc.textContent=k+' / 8 voci compilate · parziale '+t;}
+    else if(has(c)){cc.className='chip'+(c>=10?' hi':' lo');cc.textContent='CAT '+c+' / 40 (inserito a mano) · '+(c>=10?'molti sintomi (≥ 10)':'pochi sintomi (< 10)');}
+    else{cc.className='chip';cc.textContent='0 / 8 voci compilate';}
+  }
+  const pg=E('#prog_cat');if(pg)pg.style.width=(k/8*100)+'%';
+}
+function renderAll(){chips();Object.keys(TOOLS).forEach(paint);}
+
+/* ============ eventi ============ */
+document.addEventListener('input',e=>{
+  const el=e.target;if(!el.dataset||!el.dataset.k)return;
+  S[el.dataset.k]=el.value;
+  applyVis();renderAll();
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const sg=b.closest('[data-seg]');
+  if(sg){const k=sg.dataset.seg;S[k]=b.dataset.v;sg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(/^b_q\d$/.test(k))syncCat();applyVis();renderAll();return;}
+  if(b.classList.contains('copy')){const ta=E('textarea',b.closest('.card'));ta.select();(navigator.clipboard?navigator.clipboard.writeText(ta.value):Promise.reject()).catch(()=>document.execCommand('copy')).finally(()=>{E('.cm',b.closest('.card')).textContent='Testo copiato.';});return;}
+  if(b.classList.contains('reset')){S=Object.assign({},DEF);build();return;}
+});
+
+/* ============ navigazione ============ */
+let cur={d:'bpco',m:'terapia'};
+function showCurrent(){
+  document.body.dataset.d=cur.d;
+  document.querySelectorAll('#navD button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===cur.d));
+  document.querySelectorAll('#navM button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===cur.m));
+  document.querySelectorAll('.tool').forEach(t=>t.classList.toggle('on',t.id==='t-'+cur.d+'-'+cur.m));
+}
+function go(d,m,push){cur={d:d||cur.d,m:m||cur.m};showCurrent();if(push)location.hash=cur.d+'/'+cur.m;}
+document.getElementById('navD').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.d,null,true);});
+document.getElementById('navM').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(null,b.dataset.m,true);});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1).split('/');if(TOOLS[h[0]+'-'+h[1]])go(h[0],h[1],false);});
+(function(){const h=location.hash.slice(1).split('/');if(TOOLS[h[0]+'-'+h[1]])cur={d:h[0],m:h[1]};build();})();
+</script>
+</body>
+</html>
